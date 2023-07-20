@@ -14,7 +14,7 @@ export default function App() {
     setUser(undefined);
   }, []);
 
-  const handleSignIn = useCallback<FormEventHandler<HTMLFormElement>>(
+  const handleSignUp = useCallback<FormEventHandler<HTMLFormElement>>(
     async (e) => {
       e.preventDefault();
 
@@ -38,25 +38,58 @@ export default function App() {
     []
   );
 
+  const handleSignIn = useCallback<FormEventHandler<HTMLFormElement>>(
+    async (e) => {
+      e.preventDefault();
+
+      const form = e.currentTarget;
+      const email = (form.elements.namedItem("email") as HTMLInputElement)
+        .value;
+      const password = (form.elements.namedItem("password") as HTMLInputElement)
+        .value;
+
+      console.log({ email, password });
+
+      const { user } = await Auth.signIn(email, password);
+
+      setUser(user);
+    },
+    []
+  );
+
   if (user) {
     return (
       <button type="button" onClick={handleSignOut}>
-        Sign out
+        Sign out ({user.challengeName})
       </button>
     );
   }
 
   return (
-    <form onSubmit={handleSignIn}>
-      <div>
-        <label htmlFor="email">Email</label>
-        <input type="email" id="email" name="email" />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input type="password" id="password" name="password" />
-      </div>
-      <button type="submit">Sign Up</button>
-    </form>
+    <>
+      <form onSubmit={handleSignUp}>
+        <div>
+          <label htmlFor="email">Email</label>
+          <input type="email" id="email" name="email" />
+        </div>
+        <div>
+          <label htmlFor="password">Password</label>
+          <input type="password" id="password" name="password" />
+        </div>
+        <button type="submit">Sign Up</button>
+      </form>
+
+      <form onSubmit={handleSignIn}>
+        <div>
+          <label htmlFor="email">Email</label>
+          <input type="email" id="email" name="email" />
+        </div>
+        <div>
+          <label htmlFor="password">Password</label>
+          <input type="password" id="password" name="password" />
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+    </>
   );
 }
